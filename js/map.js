@@ -47,7 +47,7 @@ async function initMap(){
   map.addLayer({id:'ln-d',type:'line',source:'ln',filter:['==',['get','d'],1],paint:Object.assign({'line-dasharray':[1.5,2.5]},lp),layout:{'line-cap':'round','line-join':'round'}});
   map.addLayer({id:'ln-s',type:'line',source:'ln',filter:['==',['get','d'],0],paint:lp,layout:{'line-cap':'round','line-join':'round'}});
   map.addLayer({id:'pt',type:'circle',source:'pt',paint:{'circle-radius':['get','r'],'circle-color':['get','f'],'circle-opacity':['get','o'],'circle-stroke-color':['get','s'],'circle-stroke-width':['get','w']}});
-  map.on('click',e=>{ if(M.tool){toolClick(e);return} const f=map.queryRenderedFeatures([[e.point.x-9,e.point.y-9],[e.point.x+9,e.point.y+9]],{layers:['pt']}); if(f.length){const best=f.sort((a,b)=>b.properties.r-a.properties.r)[0]; if(best.properties.i>=0) placeSheet(best.properties.i)}});
+  map.on('click',e=>{ if(M.tool){toolClick(e);return} const f=map.queryRenderedFeatures([[e.point.x-9,e.point.y-9],[e.point.x+9,e.point.y+9]],{layers:['pt']}); if(f.length){const dd=x=>{const q=map.project(x.geometry.coordinates); return (q.x-e.point.x)**2+(q.y-e.point.y)**2}, best=f.sort((a,b)=>dd(a)-dd(b))[0]; if(best.properties.t) treeSheet(best.properties.t); else if(best.properties.i>=0) placeSheet(best.properties.i)}});
   M.map=map; M.ev=bookEvents(M.b); drawMap(true);
 }
 function stopPlay(){clearInterval(M.timer); M.timer=null; M.playing=false; M.run=(M.run||0)+1; hush()}
@@ -76,9 +76,9 @@ function clearVs(){ if(M.map.getLayer('vs')) M.map.removeLayer('vs'); if(M.map.g
 
 function drawTop(){
   const b=(act,on,txt)=>`<button data-act="${act}" class="${on?'on':''}">${txt}</button>`;
-  $('#map-top').innerHTML=b('mbook',M.mode==='book'&&!M.tool,M.mode==='book'?esc(bname(M.b))+' ▾':'By book')+b('mjour',M.mode==='journey'&&!M.tool,M.mode==='journey'?esc(M.j.t)+' ▾':'Journeys')+(M.mode==='trace'?b('mtrback',true,'Trace: '+esc(M.tr.t)):'')+(M.mode==='pat'?b('mpback',true,esc(M.pat.t)):'')+b('mtime',M.mode==='time'&&!M.tool,'Timeline')+b('mbat',M.mode==='battle'&&!M.tool,M.mode==='battle'?esc(M.bt.t)+' ▾':'Battles')+b('m3d',M.tilt,'3D')+b('mview',M.tool==='view','What can you see?')+b('mmeasure',M.tool==='measure','Walk time')+b('mdisp',M.mode==='disputed'&&!M.tool,'Disputed sites')+b('mall',M.mode==='all'&&!M.tool,'All places')+b('mtrace',M.trace,'Trace line')+b('mlabels',M.map.getLayoutProperty('lab','visibility')==='visible','Modern names');
+  $('#map-top').innerHTML=b('mbook',M.mode==='book'&&!M.tool,M.mode==='book'?esc(bname(M.b))+' ▾':'By book')+b('mjour',M.mode==='journey'&&!M.tool,M.mode==='journey'?esc(M.j.t)+' ▾':'Journeys')+(M.mode==='trace'?b('mtrback',true,'Trace: '+esc(M.tr.t)):'')+(M.mode==='pat'?b('mpback',true,esc(M.pat.t)):'')+b('mtime',M.mode==='time'&&!M.tool,'Timeline')+b('mbat',M.mode==='battle'&&!M.tool,M.mode==='battle'?esc(M.bt.t)+' ▾':'Battles')+b('mtree',M.mode==='tree'&&!M.tool,'Family tree')+b('m3d',M.tilt,'3D')+b('mview',M.tool==='view','What can you see?')+b('mmeasure',M.tool==='measure','Walk time')+b('mdisp',M.mode==='disputed'&&!M.tool,'Disputed sites')+b('mall',M.mode==='all'&&!M.tool,'All places')+b('mtrace',M.trace,'Trace line')+b('mlabels',M.map.getLayoutProperty('lab','visibility')==='visible','Modern names');
 }
-function drawMap(doFit){ if(!M.map) return; M.tool=null; M.map.getCanvas().style.cursor=''; clearVs(); clearMarks(); M.um={}; if(M.mode!=='time') M.map.getSource('emp').setData({type:'FeatureCollection',features:[]}); drawTop(); ({book:drawBook,journey:drawJourney,all:drawAll,disputed:drawDisputed,time:drawTime,battle:drawBattle,trace:drawTrace,pat:drawPat})[M.mode](doFit) }
+function drawMap(doFit){ if(!M.map) return; M.tool=null; M.map.getCanvas().style.cursor=''; clearVs(); clearMarks(); M.um={}; if(M.mode!=='time') M.map.getSource('emp').setData({type:'FeatureCollection',features:[]}); drawTop(); ({book:drawBook,journey:drawJourney,all:drawAll,disputed:drawDisputed,time:drawTime,battle:drawBattle,trace:drawTrace,pat:drawPat,tree:drawTree})[M.mode](doFit) }
 
 /* ---------- by book ---------- */
 function drawBook(doFit){
