@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14110d">
+<title>Chaqar · Bible Explorer</title>
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header id="top">
+  <div class="mark"><b>C</b>HAQAR <span class="heb" style="letter-spacing:0;font-size:17px;color:var(--gold);margin-left:6px">חקר</span></div>
+  <button data-act="fs" data-d="-1" aria-label="Smaller text">A−</button>
+  <button data-act="fs" data-d="1" aria-label="Larger text">A+</button>
+  <button data-act="theme" aria-label="Light or dark">◐</button>
+  <button data-act="about" aria-label="About and sources">ⓘ</button>
+</header>
+<main>
+  <section id="v-read" class="view on">
+    <div class="rd-bar">
+      <button id="rd-book" data-act="pickbook">Genesis 1</button>
+      <button id="rd-tr" data-act="picktr">KJV</button>
+      <button data-act="search" aria-label="Search">⌕</button>
+      <button data-act="notebook" aria-label="Notebook">❧</button>
+    </div>
+    <article id="rd-text"></article>
+  </section>
+  <section id="v-map" class="view">
+    <div id="map"></div>
+    <div class="map-top" id="map-top"></div>
+    <div class="map-card" id="map-card"></div>
+  </section>
+  <section id="v-words" class="view"><div class="pad" id="words"></div></section>
+  <section id="v-codes" class="view"><div class="pad" id="codes"></div></section>
+  <section id="v-sky" class="view"><div class="pad" id="sky"></div></section>
+  <section id="v-lib" class="view"><div class="pad" id="lib"></div></section>
+</main>
+<nav id="tabs">
+  <button data-act="tab" data-t="read" class="on"><span class="g">¶</span>Read</button>
+  <button data-act="tab" data-t="map"><span class="g">◍</span>Map</button>
+  <button data-act="tab" data-t="words"><span class="g">Αα</span>Words</button>
+  <button data-act="tab" data-t="codes"><span class="g">א׳</span>Codes</button>
+  <button data-act="tab" data-t="sky"><span class="g">✶</span>Sky</button>
+  <button data-act="tab" data-t="lib"><span class="g">❦</span>Library</button>
+</nav>
+<div id="sheet-bg" data-act="sheetclose"></div>
+<div id="sheet" role="dialog"><div id="sheet-head"></div><div id="sheet-body"></div></div>
+<div id="toast"></div>
+<script src="meta.js"></script>
+<script src="vendor/maplibre-gl.js"></script>
+<script src="vendor/astronomy.js"></script>
+<script src="js/core.js"></script>
+<script src="js/issues.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/history.js"></script>
+<script src="js/read.js"></script>
+<script src="js/words.js"></script>
+<script src="js/map.js"></script>
+<script src="js/codes.js"></script>
+<script src="js/sky.js"></script>
+<script src="js/patterns.js"></script>
+<script src="js/library.js"></script>
+<script>boot()</script>
+</body>
+</html>
