@@ -31,6 +31,7 @@
     <div class="map-top" id="map-top"></div>
     <div class="map-card" id="map-card"></div>
   </section>
+  <section id="v-tree" class="view" style="overflow:hidden"><canvas id="tree3d"></canvas><div id="tree-labels"></div><div id="tree-top"></div><div id="tree-msg"></div><div class="map-card" id="tree-bar"></div></section>
   <section id="v-words" class="view"><div class="pad" id="words"></div></section>
   <section id="v-codes" class="view"><div class="pad" id="codes"></div></section>
   <section id="v-sky" class="view"><div class="pad" id="sky"></div></section>
@@ -39,6 +40,7 @@
 <nav id="tabs">
   <button data-act="tab" data-t="read" class="on"><span class="g">¶</span>Read</button>
   <button data-act="tab" data-t="map"><span class="g">◍</span>Map</button>
+  <button data-act="tab" data-t="tree"><span class="g">ᛉ</span>Tree</button>
   <button data-act="tab" data-t="words"><span class="g">Αα</span>Words</button>
   <button data-act="tab" data-t="codes"><span class="g">א׳</span>Codes</button>
   <button data-act="tab" data-t="sky"><span class="g">✶</span>Sky</button>
@@ -50,6 +52,7 @@
 <script src="meta.js"></script>
 <script src="vendor/maplibre-gl.js"></script>
 <script src="vendor/astronomy.js"></script>
+<script src="vendor/three.js"></script>
 <script src="js/core.js"></script>
 <script src="js/issues.js"></script>
 <script src="js/catalog.js"></script>
@@ -61,6 +64,7 @@
 <script src="js/sky.js"></script>
 <script src="js/patterns.js"></script>
 <script src="js/tree.js"></script>
+<script src="js/tree3d.js"></script>
 <script src="js/library.js"></script>
 <script>boot()</script>
 </body>
