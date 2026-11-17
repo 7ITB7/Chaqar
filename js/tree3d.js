@@ -8,7 +8,7 @@ const T3EDGE={m:[.08,.08,.78],f:[.55,.08,.72],g:[.4,.4,.8],t:[.05,.5,.5],l:[.38,
 const CW=6.4, CH=1.7, GX=9.2, MINY=2.5, MINZ=3.4;
 /* paintings used as portraits beneath a few cards: person title -> index in paintings.json */
 const T3PORT={'Adam':0,'Eve':1,'Cain':3,'Noah':4,'Nimrod':5,'Isaac':6,'Jacob':7,'Moses':9,'David':10,'Solomon':11,'Daniel':13,'Mary (Mother of Jesus)':14,'Jesus Christ':15,'Simon Peter':18,'John the Apostle':19};
-VIEW.tree=async()=>{ if(!T3.D){ $('#tree-msg').textContent='Laying out the cards…'; const d=await J('tree3d.json'); if(!d){$('#tree-msg').textContent='Could not load the tree.';return} T3.D=d; try{t3Build()}catch(e){$('#tree-msg').textContent='This browser could not start the 3D view. It needs WebGL.'; console.error(e); return} $('#tree-msg').textContent=''; t3UI() } t3Resize(); if(!T3.run){T3.run=true; requestAnimationFrame(t3Frame)} };
+const T3VIEW=async()=>{ if(!T3.D){ $('#tree-msg').textContent='Laying out the cards…'; const d=await J('tree3d.json'); if(!d){$('#tree-msg').textContent='Could not load the tree.';return} T3.D=d; try{t3Build()}catch(e){$('#tree-msg').textContent='This browser could not start the 3D view. It needs WebGL.'; console.error(e); return} $('#tree-msg').textContent=''; t3UI() } t3Resize(); if(!T3.run){T3.run=true; requestAnimationFrame(t3Frame)} };
 const t3cat=r=>r[3]!=='b'?r[3]:(r[2]===1?'g':(r[4]?'f':'m'));
 const t3yr=y=>y?(+y<0?(-y)+' BC':'AD '+y):'';
 
@@ -26,8 +26,8 @@ function t3Build(){
   const pos=new Float32Array(n*3); for(let k=0;k<n;k++) for(const c of kids[k]){pos[c*3]=pos[k*3]+GX; pos[c*3+1]=pos[k*3+1]-OY[c]; pos[c*3+2]=pos[k*3+2]-OZ[c]}
   T3.pos=pos; const ext={x:0,y:0,z:0}; for(let k=0;k<n;k++){ext.x=Math.max(ext.x,pos[k*3]); ext.y=Math.min(ext.y,pos[k*3+1]); ext.z=Math.min(ext.z,pos[k*3+2])} T3.ext=ext;
 
-  const cv=$('#tree3d'), rn=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:false}); rn.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); rn.setClearColor(0x161616); T3.rn=rn;
-  const sc=new THREE.Scene(); sc.fog=new THREE.Fog(0x161616,260,2400); T3.sc=sc; T3.camO=new THREE.PerspectiveCamera(46,1,.5,2500);
+  const cv=$('#tree3d'), rn=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:false}); rn.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); rn.setClearColor(0xeef2f6); T3.rn=rn;
+  const sc=new THREE.Scene(); sc.fog=new THREE.Fog(0xeef2f6,260,2400); T3.sc=sc; T3.camO=new THREE.PerspectiveCamera(46,1,.5,2500);
   /* one texture holds every card's lettering */
   const AW=4096, AH=2048, CWp=128, CHp=36, COLS=32, at=document.createElement('canvas'); at.width=AW; at.height=AH; const g=at.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,AW,AH); g.textBaseline='alphabetic';
   for(let k=0;k<n;k++){const r=N[k], cx=(k%COLS)*CWp, cy=Math.floor(k/COLS)*CHp; g.save(); g.beginPath(); g.rect(cx+2,cy,CWp-4,CHp); g.clip(); g.fillStyle='#14143a'; let nm=r[0].replace(/ \((patriarch|son of [^)]*|father of [^)]*|Son of [^)]*)\)/,''); g.font='600 13px system-ui,Arial,sans-serif'; if(g.measureText(nm).width>CWp-10) g.font='600 11px system-ui,Arial,sans-serif'; g.fillText(nm,cx+5,cy+15);
@@ -52,7 +52,7 @@ function t3Build(){
 }
 function t3Resize(){ if(!T3.rn) return; const el=$('#v-tree'), w=el.clientWidth, h=el.clientHeight; if(!w||!h) return; T3.rn.setSize(w,h,false); T3.camO.aspect=w/h; T3.camO.updateProjectionMatrix(); T3.W=w; T3.H=h; T3.dirty=true }
 window.addEventListener('resize',()=>{ if(curTab==='tree') t3Resize() });
-function t3Frame(now){ if(curTab!=='tree'||!T3.ready){T3.run=false; return} requestAnimationFrame(t3Frame); const c=T3.cam;
+function t3Frame(now){ if(curTab!=='tree'||!T3.ready||Store.get('treemode','lin')!=='3d'){T3.run=false; return} requestAnimationFrame(t3Frame); const c=T3.cam;
   if(T3.fly){const f=T3.fly, t=Math.min(1,(now-f.t0)/f.dur), e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; for(let i=0;i<3;i++) c.t[i]=f.a[i]+(f.b[i]-f.a[i])*e; c.d=f.d0+(f.d1-f.d0)*e; if(f.th!=null){c.th=f.th0+(f.th-f.th0)*e; c.ph=f.ph0+(f.ph-f.ph0)*e} if(t>=1) T3.fly=null; T3.dirty=true}
   if(T3.spin){c.th+=.0025; T3.dirty=true}
   if(T3.hold){c.t[0]=Math.max(-10,Math.min(T3.ext.x+10,c.t[0]+T3.hold*c.d*.014)); T3.dirty=true}
@@ -104,7 +104,7 @@ ACT.t3trace=el=>{const k=+el.dataset.k; Sheet.close(); t3SetPath(k); const ln=T3
 function t3UI(){
   $('#tree-top').innerHTML=`<input class="inp" id="t3q" placeholder="Find anyone: Ruth, Caleb, Woden…" data-inp="t3find" value="${esc(T3.q)}" autocomplete="off"><div id="t3res"></div>`;
   $('#tree-bar').innerHTML=`<div class="map-eras">${[['Whole chart',-1],['Adam',0],['Noah','Noah'],['Abraham','Abraham'],['Jacob','Jacob'],['Moses','Moses'],['David','David'],['Jesus','Jesus Christ'],['No line recorded',-2]].map(x=>`<button data-act="t3jump" data-k="${x[1]}">${x[0]}</button>`).join('')}</div>
-  <div class="ctl"><button data-act="t3spin" aria-label="Turn slowly">⟳</button><button data-hold="-1" aria-label="Earlier generations">◀</button><button data-hold="1" aria-label="Later generations">▶</button><button data-act="t3scr" style="width:auto;padding:0 12px;border-radius:21px;font-size:12.5px" class="${T3.scr?'go':''}">Scripture only</button>${T3.path?'<button data-act="t3clear" style="width:auto;padding:0 12px;border-radius:21px;font-size:12.5px">Clear line</button>':''}<span style="flex:1"></span><button data-act="t3key" aria-label="Key">?</button></div>`;
+  <div class="ctl"><button data-act="t3spin" aria-label="Turn slowly">⟳</button><button data-hold="-1" aria-label="Earlier generations">◀</button><button data-hold="1" aria-label="Later generations">▶</button><button data-act="t3scr" style="width:auto;padding:0 12px;border-radius:21px;font-size:12.5px" class="${T3.scr?'go':''}">Scripture only</button>${T3.path?'<button data-act="t3clear" style="width:auto;padding:0 12px;border-radius:21px;font-size:12.5px">Clear line</button>':''}<span style="flex:1"></span><button data-act="treemode" data-k="lin" style="width:auto;padding:0 12px;border-radius:21px;font-size:12.5px">Simple tree</button><button data-act="t3key" aria-label="Key">?</button></div>`;
   $$('#tree-bar [data-hold]').forEach(b=>{const on=e=>{e.preventDefault(); T3.hold=+b.dataset.hold; T3.dirty=true}, off=()=>{T3.hold=0}; b.addEventListener('pointerdown',on); b.addEventListener('pointerup',off); b.addEventListener('pointerleave',off); b.addEventListener('pointercancel',off)}) }
 ACT.t3spin=()=>{T3.spin=!T3.spin; T3.dirty=true};
 ACT.t3scr=()=>{T3.scr=!T3.scr; T3.cards[1].visible=!T3.scr; T3.links[1].visible=!T3.scr; T3.dirty=true; t3UI(); toast(T3.scr?'Showing only what the Bible states':'Tradition and legend cards shown')};
