@@ -12,7 +12,7 @@ const yr=y=>y<0?(-y)+' BC':'AD '+y;
 async function lMs(el){
   el.innerHTML='<p class="load">Loading…</p>'; const d=LB.MS||(LB.MS=await J('manuscripts.json')); if(!d){el.innerHTML='<p class="load">Could not load.</p>';return}
   const list=d.slice().sort((a,b)=>a.y-b.y);
-  el.innerHTML=`<p class="note">${list.length} manuscripts and printed Bibles in date order, about ${d.reduce((n,m)=>n+m.pics.length,0)} photographs. Tap one for its pages and where to see the whole book online.</p>`+list.map(m=>`<button class="ms" data-act="ms" data-id="${m.id}"><div class="th" style="${m.pics[0]?`background-image:url('${esc(thumb(m.pics[0].u))}')`:''}"></div><div><div class="yr">${esc(m.d)}</div><h3>${esc(m.t)}</h3><p>${esc(m.b)}</p></div></button>`).join('');
+  el.innerHTML=`<p class="note">${list.length} manuscripts and printed Bibles in date order, about ${d.reduce((n,m)=>n+m.pics.length,0)} photographs. Tap one for its pages and where to see the whole book online.</p>`+list.map(m=>`<button class="ms" data-act="ms" data-id="${m.id}"><div class="th${m.pics[0]?'':' th0'}" style="${m.pics[0]?`background-image:url('${esc(thumb(m.pics[0].u))}'),var(--thph)`:''}"></div><div><div class="yr">${esc(m.d)}</div><h3>${esc(m.t)}</h3><p>${esc(m.b)}</p></div></button>`).join('');
 }
 ACT.ms=el=>{const m=LB.MS.find(x=>x.id===el.dataset.id); Sheet.open({title:m.t,full:true,render(e2){
   e2.innerHTML=`<div class="lbl" style="color:var(--red)">${esc(m.d)} · ${esc(m.k)}</div><div class="prose" style="margin-top:10px"><p>${esc(m.b)}</p></div><p class="sub">Held at: ${esc(m.w)}</p>

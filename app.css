@@ -363,3 +363,63 @@ body:has(#v-tree.on) #sheet{--bg:#fffdf7;--bg2:#f6efe0;--bg3:#efe4cc;--line:#e6d
 .ms-strip{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.ms-strip::-webkit-scrollbar{display:none}
 .ms-strip .btn{flex:none;white-space:nowrap}
 #ms-mapbox{height:58vh}
+
+/* ---- header icons ---- */
+#top{gap:2px}
+#top button{width:36px}
+#top .ic{width:19px;height:19px;display:block;margin:auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#top .ic .fill{fill:currentColor;stroke:none}
+
+/* ---- segmented tabs: fade the edge when more are hidden off-screen ---- */
+.seg.more-r{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
+.seg.more-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 18%);mask-image:linear-gradient(90deg,transparent,#000 18%)}
+.seg.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+
+/* ---- library thumbnails: a placeholder until the picture arrives ---- */
+:root{--thph:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23927f5c' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M4 5.5C6.5 4 9.5 4 12 6c2.5-2 5.5-2 8-.5V19c-2.5-1.5-5.5-1.5-8 .5-2.5-2-5.5-2-8-.5z'/%3E%3Cpath d='M12 6v13.5'/%3E%3C/svg%3E")}
+.ms .th{background-size:cover,30px 30px;background-position:center}
+.ms .th.th0{background-image:var(--thph);background-size:30px 30px}
+
+/* ---- first readers ---- */
+.ctxline{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:-6px 0 18px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);font-family:var(--sans)}
+.ctxline .lbl{margin:0;flex:none;color:var(--gold)}
+.ctxline .t{flex:1;min-width:0;font-size:13px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctxline i{font-style:normal;color:var(--dim)}
+.ctxrow{margin:14px 0 0}
+.ctxrow .lbl{margin-bottom:3px}
+.ctxrow p{margin:0;font-size:16.5px;line-height:1.5}
+.ctxrow.q p{font-family:var(--sans);font-size:14px;color:var(--dim)}
+.eraH{margin:22px 0 4px;padding-top:12px;border-top:1px solid var(--line)}
+.eraH h3{margin:0;font-size:19px;color:var(--gold);font-weight:400}
+.eraH p{margin:2px 0 4px;font-family:var(--sans);font-size:12.5px;color:var(--dim)}
+.li h3 small{font-family:var(--sans);font-size:11.5px;color:var(--dim);font-weight:400;margin-left:6px}
+
+/* ---- a word through time ---- */
+details.era{border-bottom:1px solid var(--line);padding:2px 0}
+details.era summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;padding:7px 0;font-family:var(--sans);font-size:13px}
+details.era summary::-webkit-details-marker{display:none}
+details.era summary .en{flex:0 0 46%;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.era summary i{display:block;height:9px;background:var(--gold);border-radius:2px}
+details.era summary b{font-weight:400;color:var(--dim)}
+details.era[open] summary .en{color:var(--gold)}
+details.era .gl{margin:0 0 8px;font-family:var(--sans);font-size:13px;color:var(--ink)}
+details.era .gl b{font-weight:400;color:var(--dim)}
+details.era .chips{margin-bottom:10px}
+
+/* ---- 1611 English ---- */
+.oldw{text-decoration:underline dotted var(--gold);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.oldw.old{text-decoration-color:var(--dim)}
+.then,.now{margin-top:14px;padding:10px 12px;border-radius:8px;border:1px solid var(--line)}
+.then{border-color:var(--gold)}
+.then p,.now p{margin:2px 0 0;font-size:17px;line-height:1.45}
+.now p{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(160,140,110,.5)}
+
+/* ---- offline ---- */
+.offrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-family:var(--sans)}
+.offrow>div{flex:1;min-width:0}
+.offrow b{display:block;font-weight:500;font-size:14.5px}
+.offrow small{display:block;font-size:12px;color:var(--dim);margin-top:2px}
+.offbar{height:4px;border-radius:2px;background:var(--bg3);margin-top:7px;overflow:hidden}
+.offbar i{display:block;height:100%;background:var(--green);transition:width .2s}
+.ref span.oldw,.li span.oldw{display:inline!important;margin:0;padding:0}
+.ctxli h3 small{text-transform:none;letter-spacing:0;font-size:12.5px}

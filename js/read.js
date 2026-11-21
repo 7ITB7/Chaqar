@@ -10,19 +10,19 @@ async function renderRead(flashV){
   $('#rd-book').textContent=bname(s.b)+' '+s.c; $('#rd-tr').textContent=s.tr+(s.alt?' + '+s.alt:'');
   if(!el.firstChild) el.innerHTML='<p class="load">Opening…</p>';
   const d=await J(`t/${tr}/${s.b}.json`);
-  if(!d){el.innerHTML='<p class="load">Could not load this book. Check your connection and try again.</p>';return}
+  if(!d){el.innerHTML=navigator.onLine?'<p class="load">Could not load this book. Check your connection and try again.</p>':`<p class="load">You are offline and ${esc(TRI[tr][0])} is not saved on this device yet.</p><div class="rd-nav"><button class="btn" data-act="offline">Save books for offline</button></div>`;return}
   if(s.c>d.length) s.c=d.length; if(s.c<1) s.c=1;
   $('#rd-book').textContent=bname(s.b)+' '+s.c;
   const ch=d[s.c-1]||[]; let alt=null;
   if(s.alt&&s.alt!==tr&&hasBook(s.alt,s.b)){const a=await J(`t/${s.alt}/${s.b}.json`); alt=a&&a[s.c-1]}
-  const lc=lcls(tr);
-  let h=`<h1 class="rub">${esc(bname(s.b))}</h1><div class="chap">${s.b==='PSA'?'Psalm':'Chapter'} ${s.c} · ${esc(TRI[tr][0])}</div>`;
+  const lc=lcls(tr), old=oldActive(tr); if(old) await oldWords();
+  let h=`<h1 class="rub">${esc(bname(s.b))}</h1><div class="chap">${s.b==='PSA'?'Psalm':'Chapter'} ${s.c} · ${esc(TRI[tr][0])}</div>`+await ctxLine(s.b);
   if(tr!==s.tr) h+=`<p class="note">${esc(TRI[s.tr][0])} does not include ${esc(bname(s.b))}. Showing the ${esc(TRI[tr][0])}.</p>`;
   if(s.b==='PSA'&&LXXNUM[tr]) h+=`<p class="note">Greek and Latin Bibles number the Psalms differently. From Psalm 10 to 147 this is usually one behind the Hebrew and English number.</p>`;
   else if(HEBNUM[tr]&&HM&&HM[s.b]) h+=`<p class="note">This text uses Hebrew verse numbers, which differ from English Bibles in places.</p>`;
   let any=false;
   ch.forEach((t,i)=>{const a=alt&&alt[i]; if(!t&&!a) return; any=true; const v=i+1, m=R.marks[mkey(s.b,s.c,v)]||{};
-    h+=`<p class="vs ${lc} ${m.h?'hl'+m.h:''}" data-act="verse" data-v="${v}"><sup>${v}</sup>${esc(t)}${m.bm?'<i class="bm">❧</i>':''}${m.n?'<i class="nt">✎</i>':''}${a?`<span class="alt ${lcls(s.alt)}">${esc(a)}</span>`:''}</p>`});
+    h+=`<p class="vs ${lc} ${m.h?'hl'+m.h:''}" data-act="verse" data-v="${v}"><sup>${v}</sup>${old?markOld(t,s.b,s.c,v):esc(t)}${m.bm?'<i class="bm">❧</i>':''}${m.n?'<i class="nt">✎</i>':''}${a?`<span class="alt ${lcls(s.alt)}">${esc(a)}</span>`:''}</p>`});
   if(!any) h+='<p class="load">This translation has no text for this chapter.</p>';
   h+=`<div class="rd-nav"><button class="btn" data-act="chap" data-d="-1">‹ Previous</button><button class="btn" data-act="chap" data-d="1">Next ›</button></div>`;
   if(BI[s.b]<66) h+=`<div class="rd-nav" style="margin-top:10px"><button class="btn" data-act="mapchap">◍ Places in this chapter</button></div>`;
@@ -60,8 +60,8 @@ ACT.settr=el=>{const o=Sheet.top(); if(o&&o.mode==='alt') R.s.alt=el.dataset.tr;
 /* verse panel */
 ACT.verse=el=>openVerse(R.s.b,R.s.c,+el.dataset.v);
 function openVerse(b,c,v,tab){Sheet.open({title:refStr(b,c,v),tab:tab||'compare',b,c,v,render(el){
-  el.innerHTML=seg([['compare','Compare'],['words','Words'],['links','Links'],['note','Note']],this.tab,'vtab')+'<div id="vp"></div>';
-  ({compare:vCompare,words:vWords,links:vLinks,note:vNote})[this.tab]($('#vp',el),b,c,v)}})}
+  el.innerHTML=seg([['compare','Compare'],['words','Words'],['setting','First readers'],['links','Links'],['note','Note']],this.tab,'vtab')+'<div id="vp"></div>';
+  ({compare:vCompare,words:vWords,setting:vSetting,links:vLinks,note:vNote})[this.tab]($('#vp',el),b,c,v)}})}
 ACT.vtab=el=>{Sheet.top().tab=el.dataset.k; Sheet.redraw()};
 
 function vCompare(el,b,c,v){
