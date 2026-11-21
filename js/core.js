@@ -120,10 +120,15 @@ Word-by-word Hebrew and Greek, lexicon glosses and manuscript variant marks: STE
 Cross-references and place coordinates: OpenBible.info, CC BY 4.0.<br><br>
 Apocrypha, pseudepigrapha and early church texts: R. H. Charles (1913), the Ante-Nicene Fathers (1885–96) and other public-domain editions via scrollmapper. Gospels of Thomas, Mary, Philip, Judas and Truth: translated by Mark M. Mattison, dedicated to the public domain (gospels.net).<br><br>
 Images: Wikimedia Commons. Tap any image for its file page, author and license.<br><br>
-Satellite imagery: Esri World Imagery (Esri, Maxar, Earthstar Geographics). Terrain: Mapzen terrain tiles on AWS. Map engine: MapLibre GL.<br><br>Sky: positions from Astronomy Engine by Don Cross (MIT). Star catalog and constellation figures from d3-celestial by Olaf Frohn (BSD).<br><br>The Tree: people and family links from Theographic Bible Metadata by Robert Rouse and contributors, CC BY-SA 4.0. 3D engine: three.js (MIT).</div>`}})}
+Satellite imagery: Esri World Imagery (Esri, Maxar, Earthstar Geographics). Terrain: Mapzen terrain tiles on AWS. Map engine: MapLibre GL.<br><br>Sky: positions from Astronomy Engine by Don Cross (MIT). Star catalog and constellation figures from d3-celestial by Olaf Frohn (BSD).<br><br>First readers (dates, audiences and settings) and the 1611 English notes: written for Chaqar from standard Bible handbooks and word books. Dates are approximate and traditional and critical views are both given. Word use through time and words heard alongside: computed from the STEPBible word-by-word data.<br><br>The Tree: people and family links from Theographic Bible Metadata by Robert Rouse and contributors, CC BY-SA 4.0. 3D engine: three.js (MIT).</div>`}})}
 
 function boot(){
   if(Store.get('vellum',false)){document.documentElement.classList.add('vellum'); $('meta[name=theme-color]').content='#f1e8d5'}
   document.documentElement.style.setProperty('--fs',Store.get('fs',19)+'px');
   renderRead();
 }
+/* fade the edges of a sub-tab row when some tabs are scrolled out of sight */
+function segFade(s){const l=s.scrollLeft>4, r=s.scrollLeft+s.clientWidth<s.scrollWidth-4; s.classList.toggle('more-l',l); s.classList.toggle('more-r',r)}
+let _sf=0; const segFadeAll=()=>{if(_sf) return; _sf=requestAnimationFrame(()=>{_sf=0; $$('.seg').forEach(segFade)})};
+document.addEventListener('scroll',e=>{const t=e.target; if(t.classList&&t.classList.contains('seg')) segFade(t)},true);
+new MutationObserver(segFadeAll).observe(document.body,{childList:true,subtree:true}); addEventListener('resize',segFadeAll);

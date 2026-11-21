@@ -3,8 +3,9 @@ const W={tab:'issues',filter:'all',lang:'H',q:''};
 VIEW.words=()=>{ if(!$('#words').firstChild) renderWords() };
 function renderWords(){
   const el=$('#words');
-  let h=`<h2 class="sec rub">Words</h2><p class="sub">Where translators disagree, what the Hebrew and Greek say, and where the manuscripts differ.</p>`+seg([['issues','Disputed passages'],['lex','Dictionary'],['var','Manuscripts']],W.tab,'wtab')+'<div id="wbody"></div>';
-  el.innerHTML=h; ({issues:wIssues,lex:wLex,var:wVar})[W.tab]($('#wbody'));
+  let h=`<h2 class="sec rub">Words</h2><p class="sub">Where translators disagree, what the Hebrew and Greek say, and where the manuscripts differ.</p>`+seg([['issues','Disputed passages'],['lex','Dictionary'],['ctx','First readers'],['old','1611 English'],['var','Manuscripts']],W.tab,'wtab')+'<div id="wbody"></div>';
+  el.innerHTML=h; ({issues:wIssues,lex:wLex,ctx:wCtx,old:wOld,var:wVar})[W.tab]($('#wbody'));
+  const on=$('#words .seg .on'); if(on) on.scrollIntoView({block:'nearest',inline:'center'});
 }
 ACT.wtab=el=>{W.tab=el.dataset.k; renderWords()};
 
@@ -28,7 +29,7 @@ function openIssue(id){const it=ISSUES.find(i=>i.id===id); if(!it) return;
     /* label the word chips once the dictionary is in */
     it.s.forEach(async s=>{const e=await lexEntry(s); const b=$(`#iss-w [data-s="${s}"]`); if(e&&b) b.innerHTML=`<span class="${s[0]==='H'?'heb':'grk'}" style="font-size:17px">${esc(e.l)}</span> ${esc(e.t)}`});
   }})}
-ACT.vwords=el=>{const r=dotRef(el.dataset.ref); Sheet.push({title:refStr(r.b,r.c,r.v),tab:'words',b:r.b,c:r.c,v:r.v,render(e2){e2.innerHTML=seg([['compare','Compare'],['words','Words'],['links','Links'],['note','Note']],this.tab,'vtab')+'<div id="vp"></div>'; ({compare:vCompare,words:vWords,links:vLinks,note:vNote})[this.tab]($('#vp',e2),r.b,r.c,r.v)}})};
+ACT.vwords=el=>{const r=dotRef(el.dataset.ref); Sheet.push({title:refStr(r.b,r.c,r.v),tab:'words',b:r.b,c:r.c,v:r.v,render(e2){e2.innerHTML=seg([['compare','Compare'],['words','Words'],['setting','First readers'],['links','Links'],['note','Note']],this.tab,'vtab')+'<div id="vp"></div>'; ({compare:vCompare,words:vWords,setting:vSetting,links:vLinks,note:vNote})[this.tab]($('#vp',e2),r.b,r.c,r.v)}})};
 
 /* ----- dictionary ----- */
 const LEX={H:null,G:null,idx:{}};
@@ -49,8 +50,8 @@ function openLex(s){ if(!s){toast('No dictionary number for this word');return}
     if(e.d) h+=`<p class="def" style="font-size:14.5px">${e.d}</p>`;
     if(e.k) h+=`<p class="def" style="color:var(--dim);font-size:14.5px">King James renderings: ${esc(e.k)}</p>`;
     if(e.r&&e.r.length) h+=`<div class="lbl" style="margin:16px 0 8px">How it is translated here</div>`+e.r.map(r=>`<div class="bar"><span>${esc(r[0])}</span><i style="width:${Math.max(2,Math.round(r[1]/mx*40))}%"></i><b>${r[1]}</b></div>`).join('');
-    h+=`<div class="lbl" style="margin:18px 0 4px">Where it appears</div><div id="lx-c"><p class="load">Loading…</p></div>`;
-    el.innerHTML=h;
+    h+=`<div id="lx-t"></div><div class="lbl" style="margin:18px 0 4px">Where it appears</div><div id="lx-c"><p class="load">Loading…</p></div>`;
+    el.innerHTML=h; lexTime(e,$('#lx-t'));
     J(`lex/c${L}.json`).then(c=>{const box=$('#lx-c'); if(!box) return; const refs=c&&c[e.key]||[]; if(!refs.length){box.innerHTML='<p class="note">No occurrences on file.</p>';return}
       const show=refs.slice(0,o.shown); box.innerHTML=show.map((p,i)=>{const r=unpack(p); return `<button class="ref" data-act="goref" data-ref="${r.b}.${r.c}.${r.v}"><b>${esc(refStr(r.b,r.c,r.v))}</b><span id="lc${i}">…</span></button>`}).join('')+(refs.length>o.shown?`<button class="btn" data-act="lexmore" style="margin-top:12px;width:100%">Show more (${Math.min(refs.length,300)-o.shown} more${e.n>300?' of the first 300':''})</button>`:'');
       show.forEach((p,i)=>{const r=unpack(p); verseText('KJV',r.b,r.c,r.v).then(t=>{const x=$('#lc'+i); if(x) x.textContent=t})})});
